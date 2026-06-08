@@ -32,3 +32,4 @@ npm-debug.log*
 
 # Figma Make internals
 __figma__entrypoint__.ts
+.github/
