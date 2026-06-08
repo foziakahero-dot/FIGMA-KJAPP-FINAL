@@ -4,10 +4,10 @@
     "slug": "kjapp-taxi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/imports/image.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/imports/image.png",
       "resizeMode": "contain",
       "backgroundColor": "#0a0a1a"
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/imports/image.png",
         "backgroundColor": "#0a0a1a"
       },
       "package": "no.kjapp.app",
@@ -32,7 +32,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/imports/image.png"
     },
     "plugins": [
       [
