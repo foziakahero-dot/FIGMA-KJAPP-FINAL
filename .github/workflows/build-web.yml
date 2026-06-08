@@ -1,0 +1,113 @@
+name: Build web + Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Web bundle + debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - run: pnpm install --no-frozen-lockfile
+
+      # Figma Make blocks index.html + src/main.tsx in its preview, so they're
+      # not committed. We inject them here in CI so Vite can build.
+      - name: Inject Vite entrypoint
+        run: |
+          cat > index.html <<'HTML'
+          <!doctype html>
+          <html lang="no">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+              <meta name="theme-color" content="#04060f" />
+              <title>KJAPP</title>
+            </head>
+            <body>
+              <div id="root"></div>
+              <script type="module" src="/src/main.tsx"></script>
+            </body>
+          </html>
+          HTML
+
+          cat > src/main.tsx <<'TSX'
+          import { StrictMode } from "react";
+          import { createRoot } from "react-dom/client";
+          import App from "./app/App";
+          import "./styles/index.css";
+
+          createRoot(document.getElementById("root")!).render(
+            <StrictMode>
+              <App />
+            </StrictMode>,
+          );
+          TSX
+
+          rm -f __figma__entrypoint__.ts
+
+      - name: Build web bundle
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: pnpm exec vite build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: dist
+          retention-days: 30
+
+      - name: Install Capacitor
+        run: |
+          pnpm add -D @capacitor/core@^6 @capacitor/cli@^6
+          pnpm add @capacitor/android@^6 @capacitor/preferences@^6 @capacitor/status-bar@^6 @capacitor/splash-screen@^6
+
+      - name: Init Capacitor config
+        run: |
+          cat > capacitor.config.ts <<'TS'
+          import type { CapacitorConfig } from "@capacitor/cli";
+          const config: CapacitorConfig = {
+            appId: "no.kjapp.app",
+            appName: "KJAPP",
+            webDir: "dist",
+            backgroundColor: "#04060f",
+            plugins: {
+              SplashScreen: { launchShowDuration: 1200, backgroundColor: "#04060f", showSpinner: false },
+              StatusBar: { style: "DARK", backgroundColor: "#04060f" },
+            },
+          };
+          export default config;
+          TS
+
+      - name: Add Android platform + sync
+        run: |
+          pnpm exec cap add android
+          pnpm exec cap sync android
+
+      - name: Build debug APK (unsigned)
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kjapp-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30

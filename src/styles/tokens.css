@@ -1,0 +1,99 @@
+/* Aurora 2.0 — design tokens
+   Typography, spacing, radius, glass hierarchy, and motion taxonomy.
+   Import from theme.css. */
+
+:root {
+  /* Type scale — px sizes paired with line-height + weight */
+  --text-display-xl: 28px;
+  --text-display-xl-lh: 32px;
+  --text-display-lg: 22px;
+  --text-display-lg-lh: 28px;
+  --text-display-md: 17px;
+  --text-display-md-lh: 22px;
+  --text-body-lg: 15px;
+  --text-body-lg-lh: 22px;
+  --text-body: 13px;
+  --text-body-lh: 20px;
+  --text-body-sm: 11.5px;
+  --text-body-sm-lh: 16px;
+  --text-mono-md: 11px;
+  --text-mono-md-lh: 14px;
+  --text-mono-sm: 9.5px;
+  --text-mono-sm-lh: 12px;
+  --text-mono-xs: 8px;
+  --text-mono-xs-lh: 10px;
+
+  --tracking-tight: 0.06em;
+  --tracking-std: 0.16em;
+  --tracking-wide: 0.28em;
+
+  /* Spacing scale (4-px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+
+  /* Radius scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* Glass hierarchy */
+  --surface-whisper-bg: rgba(255,255,255,0.04);
+  --surface-whisper-border: rgba(255,255,255,0.06);
+  --surface-whisper-blur: 12px;
+
+  --surface-standard-bg: rgba(255,255,255,0.06);
+  --surface-standard-border: rgba(255,255,255,0.08);
+  --surface-standard-blur: 16px;
+
+  --surface-hero-bg: rgba(255,255,255,0.08);
+  --surface-hero-border: rgba(94,240,255,0.22);
+  --surface-hero-blur: 24px;
+
+  /* Motion taxonomy */
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-glide: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-loop-slow: 12s;
+  --motion-loop-med: 6s;
+  --motion-loop-fast: 3s;
+  --motion-snap: 220ms;
+  --motion-glide: 500ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-loop-slow: 0s;
+    --motion-loop-med: 0s;
+    --motion-loop-fast: 0s;
+  }
+}
+
+/* Utility classes — opt-in, no global override */
+.surface-whisper {
+  background: var(--surface-whisper-bg);
+  border: 1px solid var(--surface-whisper-border);
+  backdrop-filter: blur(var(--surface-whisper-blur));
+  -webkit-backdrop-filter: blur(var(--surface-whisper-blur));
+}
+.surface-standard {
+  background: var(--surface-standard-bg);
+  border: 1px solid var(--surface-standard-border);
+  backdrop-filter: blur(var(--surface-standard-blur));
+  -webkit-backdrop-filter: blur(var(--surface-standard-blur));
+}
+.surface-hero {
+  background: var(--surface-hero-bg);
+  border: 1px solid var(--surface-hero-border);
+  backdrop-filter: blur(var(--surface-hero-blur));
+  -webkit-backdrop-filter: blur(var(--surface-hero-blur));
+  box-shadow: 0 16px 48px -16px rgba(94,240,255,0.18);
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
